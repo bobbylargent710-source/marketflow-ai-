@@ -1,47 +1,46 @@
-# Smart Biz — MVP e-commerce
+# MarketFlow AI — MVP
 
-Application web de démonstration pour gérer une boutique e-commerce.
+MVP web responsive en français pour génération de contenus marketing.
 
-## Démarrer en local
+## Fonctionnalités incluses
+- Inscription et connexion par e-mail/mot de passe (hash bcrypt, cookie de session HTTP-only).
+- Tableau de bord avec quota de générations.
+- Générateur de textes pour Facebook, Instagram, TikTok et WhatsApp.
+- Historique des contenus sauvegardés.
+- Plans Découverte, Starter, Business et Premium.
+- Formulaire de demande de paiement MTN MoMo / Orange Money avec statut `PENDING`.
 
-Prérequis : Node.js 18 ou plus récent.
+## Lancer le projet
+Prérequis : Node.js 20+, PostgreSQL.
 
 ```bash
 npm install
+cp .env.example .env
+# Configurez DATABASE_URL et AUTH_SECRET dans .env
+npx prisma generate
+npx prisma db push
 npm run dev
 ```
+Ouvrir http://localhost:3000.
 
-Ouvrir l'URL affichée par Vite (généralement http://localhost:5173).
+## Connecter un vrai fournisseur IA
+Le MVP accepte un endpoint compatible avec une API de chat qui renvoie `choices[0].message.content`.
+Configurez `AI_API_URL`, `AI_API_KEY` et `AI_MODEL`. Sans ces valeurs, un texte de démonstration est renvoyé.
 
-Pour compiler :
-```bash
-npm run build
-npm run preview
-```
+## Paiements MTN MoMo et Orange Money
+Le formulaire crée uniquement une demande `PENDING`. Aucun argent n'est encaissé et aucun forfait payant n'est activé automatiquement. Pour passer en production :
+1. Contracter avec MTN MoMo, Orange Money ou un agrégateur autorisé disponible au Cameroun.
+2. Implémenter l'API d'initiation correspondant à la documentation et aux identifiants du marchand.
+3. Ajouter un webhook serveur avec validation de signature et vérification du statut auprès du prestataire.
+4. Activer le forfait uniquement après confirmation serveur fiable du paiement.
+5. Tester les paiements en sandbox avant le lancement.
 
-## Fonctionnalités disponibles dans cette version
+## À compléter avant commercialisation
+- Limitation de débit, protection CSRF adaptée, validation renforcée et journalisation.
+- Vérification e-mail, réinitialisation de mot de passe, politique de confidentialité et CGU.
+- Intégration réelle IA, mesure des coûts et filtres anti-abus.
+- Paiement réel, webhooks signés et gestion des renouvellements/annulations.
+- Tests automatisés, sauvegardes, monitoring, audit de sécurité et déploiement HTTPS.
+- Interface d'administration, factures/reçus et gestion complète des abonnements.
 
-- Tableau de bord et indicateurs de démonstration
-- Catalogue produits : ajout, suppression, recherche et catégories
-- Boutique client et panier
-- Création de commandes de démonstration
-- Mise à jour du statut des commandes
-- Paramètres de boutique
-- Persistance locale dans le navigateur via `localStorage`
-- Interface responsive pour mobile et ordinateur
-
-## Important : périmètre de cette livraison
-
-Cette version est un **MVP frontend fonctionnel**, pas encore une plateforme SaaS de production. Les données sont stockées dans le navigateur utilisé et ne sont pas synchronisées entre appareils ou utilisateurs. L'authentification, la base de données serveur, les rôles, les paiements réels, les e-mails, la sécurité et l'hébergement doivent être intégrés avant une mise en production.
-
-## Architecture conseillée pour la version production
-
-- Frontend : React + Vite (ou Next.js)
-- API : Node.js / NestJS
-- Base de données : PostgreSQL
-- Authentification : sessions sécurisées / fournisseur d'identité
-- Fichiers produits : stockage objet compatible S3
-- Paiements : intégration contractuelle d'un prestataire compatible avec le pays et le compte marchand
-- Déploiement : frontend + API + base de données managée
-
-Ne stockez jamais de secrets ou clés privées dans le frontend.
+Ce dépôt est un socle MVP de développement, pas un service prêt à encaisser des paiements en production.
